@@ -1,0 +1,48 @@
+[gd_scene load_steps=4 format=3 uid="uid://byby8gbh35t18"]
+
+[ext_resource type="PackedScene" uid="uid://vg05ae1ggjve" path="res://player/player.tscn" id="1_6kgle"]
+[ext_resource type="PackedScene" uid="uid://33mwd7rm8urm" path="res://border/border.tscn" id="2_pa0pc"]
+[ext_resource type="Script" path="res://game/asteroid_generator.gd" id="3_rtf3r"]
+
+[node name="Game" type="Node2D"]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 800.0
+offset_bottom = 640.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 4
+color = Color(0, 0, 0, 1)
+
+[node name="Player" parent="." instance=ExtResource("1_6kgle")]
+position = Vector2(392, 330)
+
+[node name="LeftBorder" parent="." instance=ExtResource("2_pa0pc")]
+position = Vector2(-20, 320)
+x_shift = 800.0
+rec_width = 20.0
+rec_height = 640.0
+
+[node name="RightBorder" parent="." instance=ExtResource("2_pa0pc")]
+position = Vector2(820, 320)
+x_shift = -800.0
+rec_width = 20.0
+rec_height = 640.0
+
+[node name="TopBorder" parent="." instance=ExtResource("2_pa0pc")]
+position = Vector2(400, -20)
+y_shift = 640.0
+rec_width = 800.0
+rec_height = 20.0
+
+[node name="BottomBorder" parent="." instance=ExtResource("2_pa0pc")]
+position = Vector2(400, 660)
+y_shift = -640.0
+rec_width = 800.0
+rec_height = 20.0
+
+[node name="AsteroidGenerator" type="Node" parent="."]
+script = ExtResource("3_rtf3r")
