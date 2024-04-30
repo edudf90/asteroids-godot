@@ -3,7 +3,8 @@ extends Node2D
 const MAX_SPEED = -180.0
 const MIN_SPEED = 0.
 const DECAY = 2.0
-const MAX_SHOTS = 12
+const MAX_SHOTS = 30
+const SHOT_VELOCITY = Vector2(0., - 180.)
 
 
 var flight_rotation : float
@@ -46,8 +47,15 @@ func shoot():
 			get_tree().get_first_node_in_group("game").add_child(shot)
 		else:
 			shot = shots.pop_front()
-		var top = position.y - 20.
-		shot.get_fired(Vector2(position.x, top))
+		var distance_to_top = Vector2(0., - 20.).rotated(deg_to_rad(rotation_degrees))
+		var shot_velocity = SHOT_VELOCITY.rotated(deg_to_rad(rotation_degrees))
+		var shot_position = position + distance_to_top
+		shot.reset(shot_velocity, shot_position)
 		shots.push_back(shot)
 		shooting_cooldown_over = false
 		$ShootingCooldown.start(0.5)
+
+
+func _on_shooting_cooldown_timeout():
+	$ShootingCooldown.stop()
+	shooting_cooldown_over = true

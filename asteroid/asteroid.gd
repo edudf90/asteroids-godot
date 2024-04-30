@@ -1,11 +1,10 @@
 class_name Asteroid
 extends Node2D
 
-enum {
-	SMALL,
-	MEDIUM,
-	LARGE
-}
+
+const SMALL = 1
+const MEDIUM = 2
+const LARGE = 4
 
 const SHAPES = {
 	0 : [Vector2(9., -25.), Vector2(25., -13.), Vector2(25., 12.), Vector2(14., 25.),

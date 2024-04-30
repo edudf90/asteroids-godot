@@ -1,11 +1,21 @@
-[gd_scene load_steps=2 format=3 uid="uid://ctbmtfhogr3u1"]
+[gd_scene load_steps=4 format=3 uid="uid://ctbmtfhogr3u1"]
+
+[ext_resource type="Script" path="res://shot/shot.gd" id="1_fjinc"]
+[ext_resource type="Script" path="res://shot/shot_collision_shape.gd" id="2_sirap"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3brb7"]
 size = Vector2(2, 2)
 
 [node name="Shot" type="Node2D"]
+script = ExtResource("1_fjinc")
 
 [node name="Area2D" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("RectangleShape2D_3brb7")
+debug_color = Color(0, 0.168627, 0.701961, 0.67451)
+script = ExtResource("2_sirap")
+
+[node name="Lifespan" type="Timer" parent="."]
+
+[connection signal="timeout" from="Lifespan" to="." method="_on_lifespan_timeout"]

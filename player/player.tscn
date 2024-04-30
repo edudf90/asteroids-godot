@@ -16,3 +16,7 @@ script = ExtResource("2_l22ks")
 [node name="PolygonBorderDrawer" type="Node" parent="Area2D/ShipPolygon" node_paths=PackedStringArray("collisionPolygon")]
 script = ExtResource("3_3gsxs")
 collisionPolygon = NodePath("..")
+
+[node name="ShootingCooldown" type="Timer" parent="."]
+
+[connection signal="timeout" from="ShootingCooldown" to="." method="_on_shooting_cooldown_timeout"]
