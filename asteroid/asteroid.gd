@@ -61,27 +61,29 @@ func reset(level, spawn_position = null):
 		else:
 			position.x = rng.randf_range(MIN_SPAWNING_X, MAX_SPAWNING_X)
 			position.y = MAX_SPAWNING_Y if randi_range(0, 1) % 2 == 0 else MIN_SPAWNING_Y
+		var x_middle = (MAX_SPAWNING_X + MIN_SPAWNING_X) / 2.
+		var y_middle = (MAX_SPAWNING_Y + MIN_SPAWNING_Y) / 2.
+		if position.x > x_middle:
+			velocity.x = - velocity.x
+		if position.y > y_middle:
+			velocity.y = - velocity.y
 	else:
 		position = spawn_position
-	var x_middle = (MAX_SPAWNING_X + MIN_SPAWNING_X) / 2.
-	var y_middle = (MAX_SPAWNING_Y + MIN_SPAWNING_Y) / 2.
-	if position.x > x_middle:
-		velocity.x = - velocity.x
-	if position.y > y_middle:
-		velocity.y = - velocity.y
+		velocity.x = velocity.x if randi_range(0, 1) % 2 == 0 else -velocity.x
+		velocity.y = velocity.y if randi_range(0, 1) % 2 == 0 else -velocity.y
 	if is_ready:
 		reset_child_nodes()
 
 func reset_child_nodes():
-	$PolygonCenterArea.monitoring = true
-	$PolygonCenterArea.monitorable = true
-	$PolygonCollisionArea.monitoring = true
-	$PolygonCollisionArea.monitorable = true
+	$PolygonCenterArea.set_deferred("monitoring", true)
+	$PolygonCenterArea.set_deferred("monitorable", true)
+	$PolygonCollisionArea.set_deferred("monitoring", true)
+	$PolygonCollisionArea.set_deferred("monitorable", true)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	is_ready = true
-	$PolygonCollisionArea/AsteroidPolygon.polygon = PackedVector2Array(SHAPES[shape])
+	$PolygonCollisionArea/AsteroidPolygon.set_deferred("polygon", PackedVector2Array(SHAPES[shape]))
 	$PolygonCenterArea.add_to_group("moving_body")
 	$PolygonCollisionArea.connect("area_entered", on_polygon_collision_area_entered)
 

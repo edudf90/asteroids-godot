@@ -41,14 +41,19 @@ func decide_new_asteroid_size(asteroid : Asteroid):
 	return asteroid_size
 
 func despawn_asteroid(asteroid : Asteroid):
+	var original_position = asteroid.position
 	asteroid.remove()
 	dead_asteroids.push_back(asteroid)
 	current_sum_asteroid_levels -= asteroid.size
 	if asteroid.size != asteroid.SMALL:
 		var child1 = get_asteroid_instance()
-		set_asteroid(child1, asteroid.size / 2, asteroid.position)
+		if child1 == null:
+			return
+		set_asteroid(child1, asteroid.size / 2, original_position)
 		var child2 = get_asteroid_instance()
-		set_asteroid(child2, asteroid.size / 2, asteroid.position)
+		if child2 == null:
+			return
+		set_asteroid(child2, asteroid.size / 2, original_position)
 
 func get_asteroid_instance():
 	if asteroids.size() < MAX_ASTEROIDS:
@@ -61,10 +66,10 @@ func get_asteroid_instance():
 
 func set_asteroid(asteroid : Asteroid, size : int, spawn_position):
 	current_sum_asteroid_levels += size
-	asteroid.reset(size, spawn_position)
+	asteroid.reset(size, spawn_position) 
 	if asteroids.size() < MAX_ASTEROIDS:
 		asteroids.push_back(asteroid)
-		add_child(asteroid)
+		call_deferred("add_child", asteroid)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
