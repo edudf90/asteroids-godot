@@ -1,7 +1,6 @@
 class_name Asteroid
 extends Node2D
 
-
 const SMALL = 1
 const MEDIUM = 2
 const LARGE = 4
@@ -18,13 +17,13 @@ const SHAPES = {
 const MIN_SCALE = {
 	SMALL: 0.25, 
 	MEDIUM: 0.5,
-	LARGE: 1.0
+	LARGE: 0.85
 }
 
 const MAX_SCALE = {
 	SMALL: 0.45, 
 	MEDIUM: 0.75,
-	LARGE: 1.5
+	LARGE: 1.0
 }
 
 const MAX_SPEED = 100.0
@@ -36,13 +35,18 @@ const MAX_SPAWNING_X = 805.0
 const MIN_SPAWNING_Y = -5.0
 const MAX_SPAWNING_Y = 645.0
 
+signal got_destroyed
+
 var rng 
 var rotation_speed : float
 var velocity : Vector2
 var shape : int
 var scaling_factor : float
+var size : int
+var is_ready = false
 
-func reset(level):
+func reset(level, spawn_position = null):
+	size = level
 	rng = RandomNumberGenerator.new()
 	scaling_factor = rng.randf_range(MIN_SCALE[level], MAX_SCALE[level])
 	scale = Vector2(scaling_factor, scaling_factor)
@@ -50,27 +54,51 @@ func reset(level):
 	velocity.y = rng.randf_range(MIN_SPEED, MAX_SPEED)
 	velocity.x = rng.randf_range(MIN_SPEED, MAX_SPEED)
 	shape = rng.randi_range(0, SHAPES.size() - 1)
-	if velocity.x > velocity.y:
-		position.y = rng.randf_range(MIN_SPAWNING_Y, MAX_SPAWNING_Y)
-		position.x = MAX_SPAWNING_X if randi_range(0, 1) % 2 == 0 else MIN_SPAWNING_X  
+	if spawn_position == null:
+		if velocity.x > velocity.y:
+			position.y = rng.randf_range(MIN_SPAWNING_Y, MAX_SPAWNING_Y)
+			position.x = MAX_SPAWNING_X if randi_range(0, 1) % 2 == 0 else MIN_SPAWNING_X  
+		else:
+			position.x = rng.randf_range(MIN_SPAWNING_X, MAX_SPAWNING_X)
+			position.y = MAX_SPAWNING_Y if randi_range(0, 1) % 2 == 0 else MIN_SPAWNING_Y
 	else:
-		position.x = rng.randf_range(MIN_SPAWNING_X, MAX_SPAWNING_X)
-		position.y = MAX_SPAWNING_Y if randi_range(0, 1) % 2 == 0 else MIN_SPAWNING_Y
+		position = spawn_position
 	var x_middle = (MAX_SPAWNING_X + MIN_SPAWNING_X) / 2.
 	var y_middle = (MAX_SPAWNING_Y + MIN_SPAWNING_Y) / 2.
 	if position.x > x_middle:
 		velocity.x = - velocity.x
 	if position.y > y_middle:
 		velocity.y = - velocity.y
+	if is_ready:
+		reset_child_nodes()
+
+func reset_child_nodes():
+	$PolygonCenterArea.monitoring = true
+	$PolygonCenterArea.monitorable = true
+	$PolygonCollisionArea.monitoring = true
+	$PolygonCollisionArea.monitorable = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	is_ready = true
 	$PolygonCollisionArea/AsteroidPolygon.polygon = PackedVector2Array(SHAPES[shape])
 	$PolygonCenterArea.add_to_group("moving_body")
-	pass # Replace with function body.
+	$PolygonCollisionArea.connect("area_entered", on_polygon_collision_area_entered)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
 	rotate(rotation_speed)
 	translate(velocity * delta)
 
+func on_polygon_collision_area_entered(area : Area2D):
+	if area.is_in_group("bullet"):
+		got_destroyed.emit(self)
+		area.get_parent().remove_shot()
+
+func remove():
+	$PolygonCenterArea.set_deferred("monitoring", false)
+	$PolygonCenterArea.set_deferred("monitorable", false)
+	$PolygonCollisionArea.set_deferred("monitoring", false)
+	$PolygonCollisionArea.set_deferred("monitorable", false)
+	velocity = Vector2(0., 0.)
+	position = Vector2(-100., 100.)

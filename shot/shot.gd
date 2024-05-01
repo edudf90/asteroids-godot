@@ -13,12 +13,14 @@ func reset(velocity, position):
 
 func reset_child_nodes():
 	$Lifespan.start(LIFESPAN)
-	$Area2D/CollisionShape2D.disabled = false
+	$Area2D.monitorable = true
+	$Area2D.monitoring = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	is_ready = true
 	$Area2D.add_to_group("moving_body")
+	$Area2D.add_to_group("bullet")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
@@ -32,4 +34,5 @@ func remove_shot():
 	$Lifespan.stop()
 	self.velocity = Vector2(0., 0.)
 	self.position = Vector2(-50., -50.)
-	$Area2D/CollisionShape2D.disabled = true
+	$Area2D.set_deferred("monitorable", false)
+	$Area2D.set_deferred("monitoring", false)
