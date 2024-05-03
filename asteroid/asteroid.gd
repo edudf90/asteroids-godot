@@ -100,8 +100,9 @@ func _physics_process(delta):
 	translate(velocity * delta)
 
 func on_polygon_collision_area_entered(area : Area2D):
-	if area.is_in_group("bullet"):
+	if area.is_in_group("bullet") || area.is_in_group("player"):
 		got_destroyed.emit(self)
+	if area.is_in_group("bullet"):
 		area.get_parent().remove_shot()
 
 func remove():

@@ -9,6 +9,7 @@ const SHOOTING_COOLDOWN = .25
 const OFFSCREEN_POSITION = Vector2(-200., -200.)
 const INITIAL_POSITION = Vector2(392., 330.)
 const INITIAL_VELOCITY = Vector2(0., 0.)
+const RESPAWN_TIME = 1.0
 
 var flight_rotation : float
 var velocity : Vector2
@@ -18,21 +19,19 @@ var shots : Array = Array()
 var shot_resource = preload("res://shot/shot.tscn")
 var shooting_cooldown_over = true
 var respawn_timer : Timer
-var invincibility_timer : Timer
 
 signal player_died
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$Area2D.add_to_group("moving_body")
+	$Area2D.add_to_group("player")
 	$Area2D.connect("area_entered", handle_collision)
+	$AnimationPlayer.connect("animation_finished", end_invincibility)
 	player_alive = true
 	respawn_timer = Timer.new()
 	add_child(respawn_timer)
 	respawn_timer.connect("timeout", respawn)
-	invincibility_timer = Timer.new()
-	add_child(invincibility_timer)
-	invincibility_timer.connect("timeout", end_invincibility)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
@@ -79,7 +78,7 @@ func handle_collision(area : Area2D):
 		$Area2D.set_deferred("monitoring", false)
 		remove()
 		player_died.emit()
-		respawn_timer.start(1.0)
+		respawn_timer.start(RESPAWN_TIME)
 
 func remove():
 	velocity = INITIAL_VELOCITY
@@ -89,10 +88,10 @@ func respawn():
 	respawn_timer.stop()
 	velocity = INITIAL_VELOCITY
 	position = INITIAL_POSITION
-	$Area2D.set_deferred("monitorable", true)
 	player_alive = true
-	invincibility_timer.start(0.75)
+	$AnimationPlayer.play("blink")
 
-func end_invincibility():
-	invincibility_timer.stop()
+func end_invincibility(animation_name):
+	$Area2D.set_deferred("monitorable", true)
 	$Area2D.set_deferred("monitoring", true)
+	$AnimationPlayer.stop()
