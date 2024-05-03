@@ -5,7 +5,10 @@ const MIN_SPEED = 0.
 const DECAY = 2.0
 const MAX_SHOTS = 30
 const SHOT_VELOCITY = Vector2(0., - 180.)
-
+const SHOOTING_COOLDOWN = .25
+const OFFSCREEN_POSITION = Vector2(-200., -200.)
+const INITIAL_POSITION = Vector2(392., 330.)
+const INITIAL_VELOCITY = Vector2(0., 0.)
 
 var flight_rotation : float
 var velocity : Vector2
@@ -14,12 +17,22 @@ var player_alive : bool
 var shots : Array = Array()
 var shot_resource = preload("res://shot/shot.tscn")
 var shooting_cooldown_over = true
+var respawn_timer : Timer
+var invincibility_timer : Timer
+
+signal player_died
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$Area2D.add_to_group("moving_body")
+	$Area2D.connect("area_entered", handle_collision)
 	player_alive = true
-
+	respawn_timer = Timer.new()
+	add_child(respawn_timer)
+	respawn_timer.connect("timeout", respawn)
+	invincibility_timer = Timer.new()
+	add_child(invincibility_timer)
+	invincibility_timer.connect("timeout", end_invincibility)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
@@ -53,9 +66,33 @@ func shoot():
 		shot.reset(shot_velocity, shot_position)
 		shots.push_back(shot)
 		shooting_cooldown_over = false
-		$ShootingCooldown.start(0.5)
-
+		$ShootingCooldown.start(SHOOTING_COOLDOWN)
 
 func _on_shooting_cooldown_timeout():
 	$ShootingCooldown.stop()
 	shooting_cooldown_over = true
+
+func handle_collision(area : Area2D):
+	if area.is_in_group("asteroid"):
+		player_alive = false
+		$Area2D.set_deferred("monitorable", false)
+		$Area2D.set_deferred("monitoring", false)
+		remove()
+		player_died.emit()
+		respawn_timer.start(1.0)
+
+func remove():
+	velocity = INITIAL_VELOCITY
+	position = OFFSCREEN_POSITION
+
+func respawn():
+	respawn_timer.stop()
+	velocity = INITIAL_VELOCITY
+	position = INITIAL_POSITION
+	$Area2D.set_deferred("monitorable", true)
+	player_alive = true
+	invincibility_timer.start(0.75)
+
+func end_invincibility():
+	invincibility_timer.stop()
+	$Area2D.set_deferred("monitoring", true)

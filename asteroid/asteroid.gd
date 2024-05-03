@@ -26,6 +26,12 @@ const MAX_SCALE = {
 	LARGE: 1.0
 }
 
+const POINTS_AWARDED = {
+	SMALL: 100,
+	MEDIUM: 50,
+	LARGE: 20
+}
+
 const MAX_SPEED = 100.0
 const MIN_SPEED = 50.0
 const MAX_ROTATION_SPEED = -0.05
@@ -86,6 +92,7 @@ func _ready():
 	$PolygonCollisionArea/AsteroidPolygon.set_deferred("polygon", PackedVector2Array(SHAPES[shape]))
 	$PolygonCenterArea.add_to_group("moving_body")
 	$PolygonCollisionArea.connect("area_entered", on_polygon_collision_area_entered)
+	$PolygonCollisionArea.add_to_group("asteroid")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
