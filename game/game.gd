@@ -7,6 +7,7 @@ func _ready():
 	$Lives.connect("no_lives_left", end_game)
 	$AsteroidManager.connect("asteroid_destroyed", $Score.score_from_asteroid)
 	$Player.connect("player_died", $Lives.decrement)
+	$Score.connect("hit_milestone", $Lives.increment)
 	pass # Replace with function body.
 
 func end_game():

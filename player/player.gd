@@ -42,9 +42,9 @@ func _physics_process(delta):
 		if speed < MIN_SPEED:
 			speed = min(speed + DECAY, MIN_SPEED)
 	if Input.is_action_pressed("ui_left"):
-		rotation_degrees += -2.0
+		rotation_degrees += -3.0
 	if Input.is_action_pressed("ui_right"):
-		rotation_degrees += 2.0
+		rotation_degrees += 3.0
 	if player_alive:
 		if Input.is_action_just_pressed("ui_accept"):
 			shoot()
