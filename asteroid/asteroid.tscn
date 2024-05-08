@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://dajjgc6nyboio"]
+[gd_scene load_steps=6 format=3 uid="uid://dajjgc6nyboio"]
 
 [ext_resource type="Script" path="res://asteroid/asteroid_polygon.gd" id="1_688kx"]
 [ext_resource type="Script" path="res://asteroid/asteroid.gd" id="1_w40l2"]
@@ -6,6 +6,16 @@
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_lstgr"]
 radius = 5.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_l2jsy"]
+particle_flag_disable_z = true
+direction = Vector3(0, 0, 0)
+spread = 180.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 20.0
+initial_velocity_max = 80.0
+orbit_velocity_min = 0.0
+orbit_velocity_max = 0.0
 
 [node name="Asteroid" type="Node2D"]
 script = ExtResource("1_w40l2")
@@ -24,3 +34,10 @@ collisionPolygon = NodePath("..")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PolygonCenterArea"]
 shape = SubResource("CircleShape2D_lstgr")
+
+[node name="Explosion" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 50
+process_material = SubResource("ParticleProcessMaterial_l2jsy")
+explosiveness = 1.0
+randomness = 1.0

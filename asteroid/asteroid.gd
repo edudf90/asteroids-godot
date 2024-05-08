@@ -50,6 +50,7 @@ var shape : int
 var scaling_factor : float
 var size : int
 var is_ready = false
+var explosion_timer : Timer
 
 func reset(level, spawn_position = null):
 	size = level
@@ -85,6 +86,7 @@ func reset_child_nodes():
 	$PolygonCenterArea.set_deferred("monitorable", true)
 	$PolygonCollisionArea.set_deferred("monitoring", true)
 	$PolygonCollisionArea.set_deferred("monitorable", true)
+	$PolygonCollisionArea/AsteroidPolygon.visible = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -93,6 +95,9 @@ func _ready():
 	$PolygonCenterArea.add_to_group("moving_body")
 	$PolygonCollisionArea.connect("area_entered", on_polygon_collision_area_entered)
 	$PolygonCollisionArea.add_to_group("asteroid")
+	explosion_timer = Timer.new()
+	add_child(explosion_timer)
+	explosion_timer.connect("timeout", finished_exploding)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
@@ -101,6 +106,9 @@ func _physics_process(delta):
 
 func on_polygon_collision_area_entered(area : Area2D):
 	if area.is_in_group("bullet") || area.is_in_group("player"):
+		$PolygonCollisionArea/AsteroidPolygon.visible = false
+		$Explosion.emitting = true
+		explosion_timer.start(1.)
 		got_destroyed.emit(self)
 	if area.is_in_group("bullet"):
 		area.get_parent().remove_shot()
@@ -110,5 +118,9 @@ func remove():
 	$PolygonCenterArea.set_deferred("monitorable", false)
 	$PolygonCollisionArea.set_deferred("monitoring", false)
 	$PolygonCollisionArea.set_deferred("monitorable", false)
+
+func finished_exploding():
+	explosion_timer.stop()
+	$Explosion.emitting = false
 	velocity = Vector2(0., 0.)
 	position = Vector2(-100., 100.)
