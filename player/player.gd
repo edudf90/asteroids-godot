@@ -81,10 +81,55 @@ func handle_collision(area : Area2D):
 		$Area2D.set_deferred("monitorable", false)
 		$Area2D.set_deferred("monitoring", false)
 		$Area2D/ShipPolygon.modulate = Color8(255, 255, 255, 0)
+		set_explosion_angles()
 		$ExplosionDown.emitting = true
 		$ExplosionRight.emitting = true
 		$ExplosionLeft.emitting = true
 		explosiont_timer.start(1.75)
+
+func set_explosion_angles():
+	var rotation_module = int(rotation_degrees) % 360
+	var ship_rotation = rotation_module if rotation_module > 0 else rotation_module + 360
+	if ship_rotation < 45 || ship_rotation > 315:
+		$ExplosionDown.process_material.gravity = Vector3(0., 20., 0.)
+		$ExplosionRight.process_material.gravity = Vector3(20., -30., 0.)
+		$ExplosionLeft.process_material.gravity = Vector3(-20., -30., 0.)
+		$ExplosionDown.process_material.angle_min = 0.0
+		$ExplosionDown.process_material.angle_max = 0.0
+		$ExplosionRight.process_material.angle_min = -70.0
+		$ExplosionRight.process_material.angle_max = -70.0
+		$ExplosionLeft.process_material.angle_min = 70.0
+		$ExplosionLeft.process_material.angle_max = 70.0
+	elif ship_rotation < 135:
+		$ExplosionDown.process_material.gravity = Vector3(-20., 0., 0.)
+		$ExplosionRight.process_material.gravity = Vector3(30., 20., 0.)
+		$ExplosionLeft.process_material.gravity = Vector3(30., -20., 0.)
+		$ExplosionDown.process_material.angle_min = 90.0
+		$ExplosionDown.process_material.angle_max = 90.0
+		$ExplosionRight.process_material.angle_min = 20.0
+		$ExplosionRight.process_material.angle_max = 20.0
+		$ExplosionLeft.process_material.angle_min = 160.0
+		$ExplosionLeft.process_material.angle_max = 160.0
+	elif ship_rotation < 225:
+		$ExplosionDown.process_material.gravity = Vector3(0., -20., 0.)
+		$ExplosionRight.process_material.gravity = Vector3(-20., 30., 0.)
+		$ExplosionLeft.process_material.gravity = Vector3(20., 30., 0.)
+		$ExplosionDown.process_material.angle_min = 0.0
+		$ExplosionDown.process_material.angle_max = 0.0
+		$ExplosionRight.process_material.angle_min = 120.0
+		$ExplosionRight.process_material.angle_max = 120.0
+		$ExplosionLeft.process_material.angle_min = 250.0
+		$ExplosionLeft.process_material.angle_max = 250.0
+	else: 
+		$ExplosionDown.process_material.gravity = Vector3(20., 0., 0.)
+		$ExplosionRight.process_material.gravity = Vector3(-30., -20., 0.)
+		$ExplosionLeft.process_material.gravity = Vector3(-30., 20., 0.)
+		$ExplosionDown.process_material.angle_min = -90.0
+		$ExplosionDown.process_material.angle_max = -90.0
+		$ExplosionRight.process_material.angle_min = -160.0
+		$ExplosionRight.process_material.angle_max = -160.0
+		$ExplosionLeft.process_material.angle_min = -20.0
+		$ExplosionLeft.process_material.angle_max = -20.0
 
 func finished_exploding():
 	$ExplosionDown.emitting = false

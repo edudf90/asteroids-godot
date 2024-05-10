@@ -27,6 +27,7 @@ _data = {
 }
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_pv0dw"]
+resource_local_to_scene = true
 particle_flag_disable_z = true
 direction = Vector3(1, -10, 0)
 spread = 180.0
@@ -40,6 +41,7 @@ orbit_velocity_max = 0.0
 scale_min = 0.5
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_diwcx"]
+resource_local_to_scene = true
 particle_flag_disable_z = true
 spread = 180.0
 flatness = 1.0
@@ -53,6 +55,7 @@ angle_max = -70.0
 scale_min = 0.5
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3l7p6"]
+resource_local_to_scene = true
 particle_flag_disable_z = true
 spread = 180.0
 gravity = Vector3(-20, -30, 0)
