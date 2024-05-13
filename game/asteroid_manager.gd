@@ -74,8 +74,3 @@ func set_asteroid(asteroid : Asteroid, size : int, spawn_position):
 		if asteroids.size() < MAX_ASTEROIDS:
 			asteroids.push_back(asteroid)
 			call_deferred("add_child", asteroid)
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	
-	pass

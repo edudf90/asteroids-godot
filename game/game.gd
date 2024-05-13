@@ -1,6 +1,5 @@
 extends Node2D
 
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	add_to_group("game")
@@ -8,11 +7,9 @@ func _ready():
 	$AsteroidManager.connect("asteroid_destroyed", $Score.score_from_asteroid)
 	$Player.connect("player_died", $Lives.decrement)
 	$Score.connect("hit_milestone", $Lives.increment)
-	pass # Replace with function body.
+	$Score.reset()
+	$Lives.reset()
 
 func end_game():
-	print("game over")
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
+	ScoreManager.score = $Score.score
+	get_tree().change_scene_to_file("res://game_over_screen/game_over_screen.tscn")

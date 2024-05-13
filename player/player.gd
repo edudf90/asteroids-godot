@@ -155,7 +155,7 @@ func respawn():
 	player_alive = true
 	$AnimationPlayer.play("blink")
 
-func end_invincibility(animation_name):
+func end_invincibility(_animation_name):
 	$Area2D.set_deferred("monitorable", true)
 	$Area2D.set_deferred("monitoring", true)
 	$AnimationPlayer.stop()
