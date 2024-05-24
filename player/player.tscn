@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://vg05ae1ggjve"]
+[gd_scene load_steps=11 format=3 uid="uid://vg05ae1ggjve"]
 
 [ext_resource type="Script" path="res://player/player.gd" id="1_2jnle"]
 [ext_resource type="Script" path="res://player/ship_polygon.gd" id="2_l22ks"]
 [ext_resource type="Script" path="res://components/polygon_border_drawer.gd" id="3_3gsxs"]
 [ext_resource type="Texture2D" uid="uid://bcd0ckp4m25w6" path="res://texture-particle2.png" id="4_majpg"]
+[ext_resource type="Script" path="res://player/death_pause_timer.gd" id="5_8immc"]
 
 [sub_resource type="Animation" id="Animation_d3n3i"]
 resource_name = "blink"
@@ -113,4 +114,11 @@ texture = ExtResource("4_majpg")
 one_shot = true
 explosiveness = 1.0
 
+[node name="DeathPauseTimer" type="Timer" parent="."]
+process_mode = 3
+wait_time = 0.5
+one_shot = true
+script = ExtResource("5_8immc")
+
 [connection signal="timeout" from="ShootingCooldown" to="." method="_on_shooting_cooldown_timeout"]
+[connection signal="timeout" from="DeathPauseTimer" to="DeathPauseTimer" method="_on_timeout"]

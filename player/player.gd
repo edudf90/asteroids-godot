@@ -36,6 +36,7 @@ func _ready():
 	respawn_timer = Timer.new()
 	add_child(respawn_timer)
 	respawn_timer.connect("timeout", respawn)
+	$DeathPauseTimer.connect("timeout", unpause)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
@@ -77,15 +78,20 @@ func _on_shooting_cooldown_timeout():
 
 func handle_collision(area : Area2D):
 	if area.is_in_group("asteroid"):
-		player_alive = false
-		$Area2D.set_deferred("monitorable", false)
-		$Area2D.set_deferred("monitoring", false)
-		$Area2D/ShipPolygon.modulate = Color8(255, 255, 255, 0)
-		set_explosion_angles()
-		$ExplosionDown.emitting = true
-		$ExplosionRight.emitting = true
-		$ExplosionLeft.emitting = true
-		explosiont_timer.start(1.75)
+		$DeathPauseTimer.start()
+		get_tree().paused = true
+
+func unpause():
+	player_alive = false
+	Engine.time_scale = 0.35
+	$Area2D.set_deferred("monitorable", false)
+	$Area2D.set_deferred("monitoring", false)
+	$Area2D/ShipPolygon.modulate = Color8(255, 255, 255, 0)
+	set_explosion_angles()
+	$ExplosionDown.emitting = true
+	$ExplosionRight.emitting = true
+	$ExplosionLeft.emitting = true
+	explosiont_timer.start(1.75)
 
 func set_explosion_angles():
 	var rotation_module = int(rotation_degrees) % 360
@@ -146,6 +152,7 @@ func remove():
 	$Area2D/ShipPolygon.modulate = Color8(255, 255, 255, 255)
 
 func respawn():
+	Engine.time_scale = 1
 	respawn_timer.stop()
 	velocity = INITIAL_VELOCITY
 	position = INITIAL_POSITION
